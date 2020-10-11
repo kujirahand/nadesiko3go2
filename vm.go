@@ -110,6 +110,11 @@ func (vm *VM) run() (Value, error) {
 			vm.sp -= 2
 			vm.stack[vm.sp] = &TNumber{value: (valL.Number() + valR.Number())}
 			vm.sp++
+		case TypeOpPlusStr:
+			valR, valL := vm.stack[vm.sp-1], vm.stack[vm.sp-2]
+			vm.sp -= 2
+			vm.stack[vm.sp] = &TString{value: (valL.String() + valR.String())}
+			vm.sp++
 		case TypeOpMinus:
 			valR, valL := vm.stack[vm.sp-1], vm.stack[vm.sp-2]
 			vm.sp -= 2
@@ -133,7 +138,7 @@ func (vm *VM) run() (Value, error) {
 		case TypeOpEq, TypeOpNtEq, TypeOpGt, TypeOpGtEq, TypeOpLt, TypeOpLtEq:
 			valR, valL := vm.stack[vm.sp-1], vm.stack[vm.sp-2]
 			vm.sp -= 2
-			vm.stack[vm.sp] = ToValue(valL.Compare(code.Type, valR))
+			vm.stack[vm.sp] = &TBool{value: valL.Compare(code.Type, valR)}
 			vm.sp++
 		default:
 			panic(fmt.Errorf("Invalid OpCode : %d", int(code.Type)))

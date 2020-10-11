@@ -48,6 +48,8 @@ func ToString(v Value) string {
 // ToValue From native type to Value
 func ToValue(v interface{}) Value {
 	switch v2 := v.(type) {
+	case bool:
+		return &TBool{value: v2}
 	case int:
 		return &TNumber{value: float64(v2)}
 	case int8:
@@ -68,6 +70,12 @@ func ToValue(v interface{}) Value {
 		return &TNumber{value: float64(v2)}
 	case float64:
 		return &TNumber{value: v2}
+	case byte:
+		return &TNumber{value: float64(v2)}
+	case []byte:
+		return &TString{value: string(v2)}
+	case []rune:
+		return &TString{value: string(v2)}
 	case string:
 		return &TString{value: v2}
 		// TODO: hash array etc
