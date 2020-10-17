@@ -145,7 +145,7 @@ func (vm *VM) run() (Value, error) {
 		}
 		vm.ci++
 	}
-	if vm.sp >= 0 {
+	if vm.sp >= 1 {
 		res := vm.stack[vm.sp-1]
 		vm.sp--
 		return res, nil
