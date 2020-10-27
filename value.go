@@ -116,17 +116,17 @@ func (v *TBool) Type() ValueType {
 
 func (v *TBool) String() string {
 	if v.value {
-		return "真"
+		return "1"
 	}
-	return "偽"
+	return "0"
 }
 
 // Number returns 0 or 1
 func (v *TBool) Number() float64 {
 	if v.value {
-		return 0
+		return 1 // true
 	}
-	return 1
+	return 0 // false
 }
 
 // Compare returns bool

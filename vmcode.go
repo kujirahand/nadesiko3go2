@@ -5,13 +5,17 @@ type VMCodeType int
 
 // VMCodeType list [params] [stack] [return]
 const (
-	TypeOpNop      VMCodeType = iota //
-	TypeOpConst                      // push(constants[A])
-	TypeOpJump                       // jump(+A)
-	TypeOpJumpTrue                   // if(stackTop){ jump(+A) }
-	TypeOpGetLocal                   // push(local[A])
-	TypeOpSetLocal                   // local[A] = pop()
-	TypeOpPlus                       // push(pop() + pop())
+	// VMCode.Begin
+	TypeOpNop       VMCodeType = iota //
+	TypeOpConst                       // push(constants[A])
+	TypeOpPushInt                     // push(A)
+	TypeOpJump                        // jump(+A)
+	TypeOpJumpTrue                    // if(stackTop){ jump(+A) }
+	TypeOpGetLocal                    // push(local[A])
+	TypeOpSetLocal                    // local[A] = pop()
+	TypeOpGetGlobal                   // push(global[const[A]])
+	TypeOpSetGlobal                   // global[A] = pop()
+	TypeOpPlus                        // push(pop() + pop())
 	TypeOpMinus
 	TypeOpMul
 	TypeOpDiv
@@ -23,6 +27,9 @@ const (
 	TypeOpGtEq
 	TypeOpLt
 	TypeOpLtEq
+	TypeOpIncLocal // local[A]++
+	TypeOpDecLocal // local[A]--
+	// VMCode.End
 )
 
 // VMCode strcut

@@ -12,6 +12,13 @@ func TestValueDef(t *testing.T) {
 	}
 }
 
+func TestValueBool(t *testing.T) {
+	v1 := &TBool{value: true}
+	if v1.Number() != 1.0 {
+		t.Errorf("bool type error")
+	}
+}
+
 func TestValue(t *testing.T) {
 	v := &TNil{}
 	if v.Type() != TypeNil {
@@ -19,8 +26,8 @@ func TestValue(t *testing.T) {
 	}
 	b := &TBool{value: true}
 	bs := b.String()
-	if bs != "真" {
-		t.Errorf("TBool.String %s != 真", bs)
+	if bs != "1" {
+		t.Errorf("TBool.String %s != 1", bs)
 	}
 	n := &TNumber{value: 32}
 	ns := n.String()

@@ -98,6 +98,15 @@ func (vm *VM) run() (Value, error) {
 		case TypeOpConst:
 			vm.stack[vm.sp] = vm.constants[code.A]
 			vm.sp++
+		case TypeOpPushInt:
+			vm.stack[vm.sp] = &TNumber{value: code.A}
+			vm.sp++
+		case TypeOpIncLocal:
+			v := vm.curFrame.locals[code.A]
+			vm.curFrame.locals[code.A] = &TNumber{value: v.Number() + 1.0}
+		case TypeOpDecLocal:
+			v := vm.curFrame.locals[code.A]
+			vm.curFrame.locals[code.A] = &TNumber{value: v.Number() - 1}
 		case TypeOpGetLocal:
 			vm.stack[vm.sp] = vm.curFrame.locals[code.A]
 			vm.sp++
