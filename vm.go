@@ -159,6 +159,10 @@ func (vm *VM) run() (Value, error) {
 			vm.sp -= 2
 			vm.stack[vm.sp] = &TBool{value: valL.Compare(code.Type, valR)}
 			vm.sp++
+		case TypeOpPrint:
+			v := vm.stack[vm.sp-1]
+			vm.sp--
+			println(">>> ", v.String())
 		default:
 			panic(fmt.Errorf("Invalid OpCode : %d", int(code.Type)))
 		}

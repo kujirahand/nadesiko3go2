@@ -10,27 +10,28 @@ const (
 	TypeOpConst                          // push(constants[A])
 	TypeOpPushInt                        // push(A)
 	TypeOpJump                           // jump(ci+A)
-	TypeOpJumpTrue                       // if(stackTop){ jump(ci+A) }
+	TypeOpJumpTrue                       // if(pop()){ jump(ci+A) }
 	TypeOpJumpAddr                       // jump(A)
-	TypeOpJumpAddrTrue                   // if(stackTop) { jump(A) }
+	TypeOpJumpAddrTrue                   // if(pop()) { jump(A) }
 	TypeOpGetLocal                       // push(local[A])
 	TypeOpSetLocal                       // local[A] = pop()
 	TypeOpGetGlobal                      // push(global[const[A]])
 	TypeOpSetGlobal                      // global[A] = pop()
 	TypeOpPlus                           // push(pop() + pop())
-	TypeOpMinus
-	TypeOpMul
-	TypeOpDiv
-	TypeOpMod
-	TypeOpPlusStr
-	TypeOpEq
-	TypeOpNtEq
-	TypeOpGt
-	TypeOpGtEq
-	TypeOpLt
-	TypeOpLtEq
-	TypeOpIncLocal // local[A]++
-	TypeOpDecLocal // local[A]--
+	TypeOpMinus                          //
+	TypeOpMul                            //
+	TypeOpDiv                            //
+	TypeOpMod                            //
+	TypeOpPlusStr                        //
+	TypeOpEq                             //
+	TypeOpNtEq                           //
+	TypeOpGt                             //
+	TypeOpGtEq                           //
+	TypeOpLt                             //
+	TypeOpLtEq                           //
+	TypeOpIncLocal                       // local[A]++
+	TypeOpDecLocal                       // local[A]--
+	TypeOpPrint                          // print(pop())
 	// __end__
 )
 

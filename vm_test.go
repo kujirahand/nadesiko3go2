@@ -99,6 +99,9 @@ func TestVMLikeFor(t *testing.T) {
 		NewCode(TypeOpGetLocal, 1, 0, 0),
 		NewCode(TypeOpPlus, 0, 0, 0),
 		NewCode(TypeOpSetLocal, 2, 0, 0),
+		// print j
+		NewCode(TypeOpGetLocal, 2, 0, 0),
+		NewCode(TypeOpPrint, 0, 0, 0),
 		// i++
 		NewCode(TypeOpIncLocal, 1, 0, 0),
 		// if i <= 10: jump top
