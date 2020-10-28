@@ -92,7 +92,7 @@ func TestVMLikeFor(t *testing.T) {
 		NewCode(TypeOpConst, const1, 0, 0),
 		NewCode(TypeOpSetLocal, 1, 0, 0),
 		// j=1
-		NewCode(TypeOpConst, const1, 0, 0),
+		NewCode(TypeOpPushInt, 0, 0, 0),
 		NewCode(TypeOpSetLocal, 2, 0, 0),
 		// j+=i
 		NewCode(TypeOpGetLocal, 2, 0, 0),
@@ -102,14 +102,16 @@ func TestVMLikeFor(t *testing.T) {
 		// i++
 		NewCode(TypeOpIncLocal, 1, 0, 0),
 		// if i <= 10: jump top
-		NewCode(TypeOpPushInt, 10, 0, 0),
 		NewCode(TypeOpGetLocal, 1, 0, 0),
+		NewCode(TypeOpPushInt, 10, 0, 0),
 		NewCode(TypeOpLtEq, 0, 0, 0),
-		NewCode(TypeOpJumpTrue, 0, 0, 0),
+		NewCode(TypeOpJumpAddrTrue, 4, 0, 0),
+		// push j
+		NewCode(TypeOpGetLocal, 2, 0, 0),
 	}
 	res, _ := vm.Eval(codes)
-	if res.Number() != 3.0 {
-		t.Errorf("TestVMPlus %s != 3.0", res.String())
+	if res.Number() != 55.0 {
+		t.Errorf("TestVMFor %s != 55.0", res.String())
 	}
 }
 
