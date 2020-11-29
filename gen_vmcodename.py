@@ -39,7 +39,7 @@ func getVMCodeName(id VMCodeType) string {
 
 '''
 result = result.replace('__CODE__', res)
-print(result)
+# print(result)
 with open(outfile, 'wt', encoding='utf-8') as fp:
     fp.write(result)
 print("ok")
