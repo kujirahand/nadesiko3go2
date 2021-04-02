@@ -31,16 +31,15 @@ func (f *Frame) SetLocal(index int, v Value) {
 
 // VM is Virtual Macine struct
 type VM struct {
-	env        *Env
-	codes      []VMCode // bytecodes
-	ci         int      // bytecode index
-	constants  []Value
-	sp         int // stack pointer
-	stack      [MaxStack]Value
-	farmeIndex int // fame index
-	frames     [MaxFrame]*Frame
-	curFrame   *Frame
-	aborted    bool
+	env       *Env
+	codes     []VMCode // bytecodes
+	ci        int      // bytecode index
+	constants []Value
+	sp        int // stack pointer
+	stack     [MaxStack]Value
+	frames    [MaxFrame]*Frame
+	curFrame  *Frame
+	aborted   bool
 }
 
 // NewVM creates VM strcut
@@ -141,7 +140,7 @@ func (vm *VM) run() (Value, error) {
 			vm.stack[vm.sp] = &TBool{value: valL.Compare(code.Type, valR)}
 			vm.sp++
 		default:
-			panic(fmt.Errorf("Invalid OpCode : %d", int(code.Type)))
+			panic(fmt.Errorf("invalid opcode : %d", int(code.Type)))
 		}
 		vm.ci++
 	}

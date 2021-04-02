@@ -1,3 +1,5 @@
+// 役立つ https://github.com/d5/tengo/blob/master/objects.go
+
 package nadesiko4
 
 import (
@@ -36,17 +38,13 @@ func GetValueTypeName(t ValueType) string {
 	if ok {
 		return v
 	}
-	return "INVALID_TYPE"
+	return "unknown"
 }
 
 // Default Values
 var (
 	// NilValue is nil value
 	NilValue Value = &TNil{}
-	// TrueValue is true
-	TrueValue Value = &TBool{value: true}
-	// FalseValue is false
-	FalseValue Value = &TBool{value: false}
 )
 
 // Value interfalce

@@ -62,9 +62,3 @@ func TestVMLikeFor(t *testing.T) {
 		t.Errorf("TestVMPlus %s != 3.0", res.String())
 	}
 }
-
-func _evalVM(t *testing.T, codes []VMCode) {
-	env := NewEnv()
-	vm := NewVM(env)
-	vm.Eval(codes)
-}

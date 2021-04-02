@@ -5,8 +5,7 @@ import (
 )
 
 func TestValueDef(t *testing.T) {
-	var s string
-	s = GetValueTypeName(NilValue.Type())
+	s := GetValueTypeName(NilValue.Type())
 	if s != "nil" {
 		t.Errorf("nil type name error")
 	}
