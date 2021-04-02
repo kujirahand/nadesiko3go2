@@ -80,23 +80,42 @@ func (vm *VM) run() (Value, error) {
 			break
 		}
 		code := vm.codes[vm.ci]
+		fmt.Printf("%3d: %s\n", vm.ci, getVMCodeName(code.Type))
 		switch code.Type {
 		case TypeOpNop:
 			// NOP
+		case TypeOpJumpAddr:
+			vm.ci = code.A
+			continue // 自動で＋１しないように
+		case TypeOpJumpAddrTrue:
+			cond := vm.stack[vm.sp-1]
+			vm.sp--
+			if cond.Number() > 0 {
+				vm.ci = code.A
+				continue // 自動で＋１しないように
+			}
 		case TypeOpJump:
 			vm.ci += code.A
-			continue
+			continue // 自動で＋１しないように
 		case TypeOpJumpTrue:
 			cond := vm.stack[vm.sp-1]
 			vm.sp--
 			if cond.Number() > 0 {
 				vm.ci += code.A
-				continue
+				continue // 自動で＋１しないように
 			}
-			continue
 		case TypeOpConst:
 			vm.stack[vm.sp] = vm.constants[code.A]
 			vm.sp++
+		case TypeOpPushInt:
+			vm.stack[vm.sp] = &TNumber{value: float64(code.A)}
+			vm.sp++
+		case TypeOpIncLocal:
+			v := vm.curFrame.locals[code.A]
+			vm.curFrame.locals[code.A] = &TNumber{value: v.Number() + 1.0}
+		case TypeOpDecLocal:
+			v := vm.curFrame.locals[code.A]
+			vm.curFrame.locals[code.A] = &TNumber{value: v.Number() - 1}
 		case TypeOpGetLocal:
 			vm.stack[vm.sp] = vm.curFrame.locals[code.A]
 			vm.sp++
@@ -139,12 +158,16 @@ func (vm *VM) run() (Value, error) {
 			vm.sp -= 2
 			vm.stack[vm.sp] = &TBool{value: valL.Compare(code.Type, valR)}
 			vm.sp++
+		case TypeOpPrint:
+			v := vm.stack[vm.sp-1]
+			vm.sp--
+			println(">>> ", v.String())
 		default:
 			panic(fmt.Errorf("invalid opcode : %d", int(code.Type)))
 		}
 		vm.ci++
 	}
-	if vm.sp >= 0 {
+	if vm.sp >= 1 {
 		res := vm.stack[vm.sp-1]
 		vm.sp--
 		return res, nil
