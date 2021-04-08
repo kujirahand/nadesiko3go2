@@ -80,7 +80,7 @@ func (vm *VM) run() (Value, error) {
 			break
 		}
 		code := vm.codes[vm.ci]
-		fmt.Printf("%3d: %s\n", vm.ci, getVMCodeName(code.Type))
+		fmt.Printf("%3d: %d\n", vm.ci, code.Type)
 		switch code.Type {
 		case TypeOpNop:
 			// NOP

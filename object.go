@@ -16,10 +16,6 @@ const (
 	TypeNameNull      = "NULL"
 )
 
-const (
-	ArrayDefaultSize = 256
-)
-
 // Object 仮想マシンで使われる基本オブジェクトのインターフェイス
 type Object interface {
 	// TypeName returns the type string
@@ -44,6 +40,8 @@ type Object interface {
 	SetDict(key string, value Object)
 	// Length returns size of object
 	Length() int
+	// StrictEqual retuens true or false
+	StrictEqual(target Object) bool
 	// Equal retuens true or false
 	Equal(target Object) bool
 }
@@ -120,6 +118,11 @@ func (o *ObjectBase) SetDict(key string, value Object) {
 	panic(ErrNotImplemented)
 }
 
+// StrictEqual retuens true or false
+func (o *ObjectBase) StrictEqual(target Object) bool {
+	return o == target
+}
+
 // Equal retuens true or false
 func (o *ObjectBase) Equal(target Object) bool {
 	return o == target
@@ -171,13 +174,19 @@ func (o *String) Length() int {
 	return len(o.Value)
 }
 
-// Equal retuens true or false
-func (o *String) Equal(target Object) bool {
+// StrictEqual retuens true or false
+func (o *String) StrictEqual(target Object) bool {
 	x, ok := target.(*String)
 	if !ok {
 		return false
 	}
 	return x.Value == o.Value
+}
+
+// Equal retuens true or false
+func (o *String) Equal(target Object) bool {
+	t := target.String()
+	return t == o.Value
 }
 
 // ------------------------------------------------------------------
@@ -222,13 +231,76 @@ func (o *Number) Length() int {
 	return 8
 }
 
-// Equal retuens true or false
-func (o *Number) Equal(target Object) bool {
+// StrictEqual retuens true or false
+func (o *Number) StrictEqual(target Object) bool {
 	x, ok := target.(*Number)
 	if !ok {
 		return false
 	}
 	return x.Value == o.Value
+}
+
+// Equal retuens true or false
+func (o *Number) Equal(target Object) bool {
+	t := target.Number()
+	return o.Value == t
+}
+
+// ------------------------------------------------------------------
+// Int type
+// ------------------------------------------------------------------
+type Int struct {
+	ObjectBase
+	Value int
+}
+
+func NewInt(def int) Object {
+	return &Int{Value: def}
+}
+
+// TypeName returns the type string
+func (o *Int) TypeName() string {
+	return TypeNameInt
+}
+
+// String returns string value
+func (o *Int) String() string {
+	return strconv.Itoa(o.Value)
+}
+
+// Number returns number value
+func (o *Int) Number() float64 {
+	return float64(o.Value)
+}
+
+// Int returns int value
+func (o *Int) Int() int {
+	return o.Value
+}
+
+// Clone returns clone object
+func (o *Int) Clone() Object {
+	return &Int{Value: o.Value}
+}
+
+// Length returns size
+func (o *Int) Length() int {
+	return 1
+}
+
+// StrictEqual retuens true or false
+func (o *Int) StrictEqual(target Object) bool {
+	x, ok := target.(*Int)
+	if !ok {
+		return false
+	}
+	return x.Value == o.Value
+}
+
+// Equal retuens true or false
+func (o *Int) Equal(target Object) bool {
+	t := target.Int()
+	return t == o.Value
 }
 
 // ------------------------------------------------------------------
@@ -277,13 +349,19 @@ func (o *Bool) Length() int {
 	return 1
 }
 
-// Equal retuens true or false
-func (o *Bool) Equal(target Object) bool {
+// StrictEqual retuens true or false
+func (o *Bool) StrictEqual(target Object) bool {
 	x, ok := target.(*Bool)
 	if !ok {
 		return false
 	}
 	return x.Value == o.Value
+}
+
+// Equal retuens true or false
+func (o *Bool) Equal(target Object) bool {
+	t := target.Bool()
+	return t == o.Value
 }
 
 // ------------------------------------------------------------------
@@ -295,7 +373,7 @@ type Array struct {
 }
 
 func NewArray() Object {
-	a := make([]Object, 0, ArrayDefaultSize)
+	a := make([]Object, 0)
 	o := &Array{Value: a}
 	return o
 }
@@ -351,8 +429,8 @@ func (o *Array) Length() int {
 	return len(o.Value)
 }
 
-// Equal retuens true or false
-func (o *Array) Equal(target Object) bool {
+// StrictEqual retuens true or false
+func (o *Array) StrictEqual(target Object) bool {
 	x, ok := target.(*Array)
 	if !ok {
 		return false
@@ -363,11 +441,24 @@ func (o *Array) Equal(target Object) bool {
 	for i := 0; i < o.Length(); i++ {
 		ov := o.GetIndex(i)
 		tv := x.GetIndex(i)
-		if !ov.Equal(tv) {
+		if !ov.StrictEqual(tv) {
 			return false
 		}
 	}
 	return true
+}
+
+// Equal retuens true or false
+func (o *Array) Equal(target Object) bool {
+	switch target.(type) {
+	case *Array:
+		return o.StrictEqual(target)
+	case *String:
+		//todo: convert to array
+		return false
+	default:
+		return false
+	}
 }
 
 // ------------------------------------------------------------------
@@ -431,8 +522,8 @@ func (o *Dict) SetDict(key string, value Object) {
 	o.Value[key] = value
 }
 
-// Equal retuens true or false
-func (o *Dict) Equal(target Object) bool {
+// StrictEqual retuens true or false
+func (o *Dict) StrictEqual(target Object) bool {
 	x, ok := target.(*Dict)
 	if !ok {
 		return false
@@ -441,11 +532,24 @@ func (o *Dict) Equal(target Object) bool {
 		return false
 	}
 	for k, v := range x.Value {
-		if !o.Value[k].Equal(v) {
+		if !o.Value[k].StrictEqual(v) {
 			return false
 		}
 	}
 	return true
+}
+
+// Equal retuens true or false
+func (o *Dict) Equal(target Object) bool {
+	switch target.(type) {
+	case *Dict:
+		return o.StrictEqual(target)
+	case *String:
+		// todo: convert to Dict
+		return false
+	default:
+		return false
+	}
 }
 
 // ------------------------------------------------------------------
@@ -485,8 +589,13 @@ func (o *Null) Length() int {
 	return 0
 }
 
-// Equal retuens true or false
-func (o *Null) Equal(target Object) bool {
+// StrictEqual retuens true or false
+func (o *Null) StrictEqual(target Object) bool {
 	_, ok := target.(*Null)
 	return ok
+}
+
+// Equal retuens true or false
+func (o *Null) Equal(target Object) bool {
+	return o.StrictEqual(target)
 }

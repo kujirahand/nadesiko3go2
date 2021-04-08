@@ -21,7 +21,7 @@ func TestObject1(t *testing.T) {
 	}
 	null1 := nadesiko4.NullValue
 	null2 := &nadesiko4.Null{}
-	if !null1.Equal(null2) {
+	if !null1.StrictEqual(null2) {
 		t.Error("Nullが一致しません")
 	}
 }
@@ -48,11 +48,11 @@ func TestObjectArray3(t *testing.T) {
 	a1.SetIndex(1, nadesiko4.NewNumber(20))
 	a2.SetIndex(0, nadesiko4.NewNumber(10))
 	a2.SetIndex(1, nadesiko4.NewNumber(20))
-	if !a1.Equal(a2) {
+	if !a1.StrictEqual(a2) {
 		t.Error("array not mutch")
 	}
 	a2.SetIndex(2, nadesiko4.NewNumber(3))
-	if a1.Equal(a2) {
+	if a1.StrictEqual(a2) {
 		t.Error("different array mutch!!")
 	}
 }
@@ -64,4 +64,43 @@ func TestObjectDict1(t *testing.T) {
 	if v == nil || v.Int() != 30 {
 		t.Errorf("dict error, %s", v)
 	}
+}
+
+func TestObjectNumber(t *testing.T) {
+	a := &nadesiko4.Number{Value: 3}
+	b := &nadesiko4.Number{Value: 3}
+	if a.Value != b.Value {
+		t.Errorf("number error, %f", a.Value)
+	}
+	if !a.Equal(b) {
+		t.Errorf("number error, %f", b.Value)
+	}
+	c := nadesiko4.NewNumber(10)
+	d := nadesiko4.NewNumber(10)
+	if !c.StrictEqual(d) {
+		t.Errorf("number error, %f", c.Number())
+	}
+}
+
+func TestObjectNumberCalc(t *testing.T) {
+	a := &nadesiko4.Number{Value: 3}
+	b := &nadesiko4.Number{Value: 5}
+	c := nadesiko4.ObjectAdd(a, b)
+	if c.Number() != 8.0 {
+		t.Errorf("number error, %f", a.Value)
+	}
+	if !c.Equal(nadesiko4.NewNumber(8)) {
+		t.Errorf("number error, %f", a.Value)
+	}
+	a2 := nadesiko4.NewInt(3)
+	b2 := nadesiko4.NewInt(5)
+	d := nadesiko4.ObjectAddStr(a2, b2)
+	if d.String() != "35" {
+		t.Errorf("ObjectAddStr error, %s", d.String())
+	}
+	e := nadesiko4.ObjectMul(a, b)
+	if e.Number() != 15 {
+		t.Errorf("ObjectMul error, %s", e.String())
+	}
+
 }
